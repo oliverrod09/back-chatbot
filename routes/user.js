@@ -30,7 +30,7 @@ router.post("/login", ValidateLogin, async(req, res)=>{
         const {user, password} = req.body;
         const userFind = await userModel.findOne({ user: user });
         if (!userFind) {
-            return res.status(200).json({status: "no encontrado"});
+            return res.status(400).json({status: "no encontrado"});
         }
         const hash = bcrypts.hashSync(password, userFind.salt);
         if (hash===userFind.password) {
@@ -77,7 +77,7 @@ router.put("/:id", ValidateToken, regAcces, async(req, res)=>{
         if (!update) {
             return res.status(400).json({status: "no encontrado"});
         }
-        res.status(201).json(update);
+        res.status(200).json(update);
     } catch (error) {
         console.log(error);
         res.status(400).json({status:"error"});
@@ -91,7 +91,7 @@ router.delete("/:id", ValidateToken, regAcces, async (req, res)=>{
         if (!userDelete) {
             return res.status(400).json({status: "no encontrado"});
         }
-        res.status(201).json({status: "eliminado"});
+        res.status(200).json({status: "eliminado"});
     } catch (error) {
         console.log(error);
         res.status(400).json({status:"error"});

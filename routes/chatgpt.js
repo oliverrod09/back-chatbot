@@ -56,7 +56,7 @@ router.post("/", ValidateToken, ValidatePrompt, regAcces, async (req, res) => {
             date_create: date,
           });
           await chatgpt.save();
-          res.send(response);
+          res.status(200).json({respuesta: response});
         }catch (error) {
           console.log(error);
           res.status(500).send("Error con la API de OpenAI");
@@ -104,7 +104,7 @@ router.post("/crear_chat", ValidateToken, ValidateDatosChatgpt, regAcces, async 
             model: "gpt-3.5-turbo",
             messages: [
               { role: "system", content: "Devuelve un json con una lista de posibles normas ISO para este tipo de empresa, la estructua debe ser un array de objetos y cada uno tendra campos iso, description" },
-              { role: "user", content: `empresa: ${empresa} cantidad de clientes: ${cantidad_clientes} ubicación: ${ubicacion}`  }
+              { role: "user", content: `empresa: ${empresa}, cantidad de clientes: ${cantidad_clientes} por mes, ubicación: ${ubicacion}`  }
           ],
             temperature: 0.2,
             max_tokens: 800,
@@ -134,7 +134,7 @@ router.post("/crear_chat", ValidateToken, ValidateDatosChatgpt, regAcces, async 
         res.send(response);
       }catch (error) {
         console.log(error);
-        res.status(500).send("Error con la API de OpenAI");
+        res.status(500).json({status: "Error con la API de OpenAI"});
       }
     });
   } catch (error) {
@@ -176,6 +176,34 @@ router.get("/user/:id_user",ValidateToken , regAcces, async (req, res)=>{
         res.status(400).json({ status: "error en el servidor" });
     }
 });
+
+
+//traer la list de chats de un usuario
+router.get("/list_chats", ValidateToken, async (req, res) => {
+  try {
+    const token = req.headers["authorization"].split(" ")[1];
+    jwt.verify(token, process.env.LOCALKEY, async (error, data) => {
+      if (error) {
+        return res.status(404).json({ status: "no estás loggeado" });
+      }
+      const user_id = data.userFind._id;
+
+      try {
+        const chats = await chatsModel.find({ id_user: user_id });
+
+        res.json(chats);
+      } catch (error) {
+        console.log(error);
+        res.status(500).json({ status: "Error al obtener los chats" });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ status: "error en el servidor" });
+  }
+});
+
+
 
   module.exports = router;
   

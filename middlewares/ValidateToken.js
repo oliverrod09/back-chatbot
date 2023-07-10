@@ -5,7 +5,7 @@ const Validate = (req, res, next)=>{
     const token = req.headers["authorization"].split(" ")[1]
     jwt.verify(token, process.env.LOCALKEY,{expiresIn:"12h"}, (error, data)=>{
         if (error) {
-            return res.status(404).json({status:"token no valido"})
+            return res.status(404).json({status:"token no valido", token:token})
         }
         console.log(data)
         next()
