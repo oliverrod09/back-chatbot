@@ -14,7 +14,7 @@ const regAcces = require("../middlewares/RegAcces");
 //enviar pregunta a chatgpt
 router.post("/", ValidateToken, ValidatePrompt, regAcces, async (req, res) => {
     try {
-      const {prompt, id_chat} = req.body;
+      const {prompt, id_chat, iso} = req.body;
   
       const token = req.headers["authorization"].split(" ")[1];
       jwt.verify(token, process.env.LOCALKEY, async (error, data) => {
@@ -29,7 +29,7 @@ router.post("/", ValidateToken, ValidatePrompt, regAcces, async (req, res) => {
             {
               model: "gpt-3.5-turbo",
               messages: [
-                { role: "system", content: "Devuelve un json con una lista de posibles isos para este tipo de empresa" },
+                { role: "system", content: `devuelve una respuesta con respecto a esta norma ISO ${iso}` },
                 { role: "user", content: `${prompt}`  }
             ],
               temperature: 0.7,
@@ -143,39 +143,39 @@ router.post("/crear_chat", ValidateToken, ValidateDatosChatgpt, regAcces, async 
   }
 });
 
-//consultar una pregunta hecha
-router.get("/:id", ValidateToken, regAcces, async (req, res)=>{
-    try {
-        const id = req.params.id;
-        const messageFind = await chatgptModel.findById(id);
-        if (!messageFind) {
-            return res.status(400).json({status: "no encontrado"});
-        }
-        res.status(200).json(messageFind);
-    } catch (error) {
-        console.log(error);
-        res.status(400).json({ status: "error en el servidor" });
-    }
-});
+// //consultar una pregunta hecha
+// router.get("/:id", ValidateToken, regAcces, async (req, res)=>{
+//     try {
+//         const id = req.params.id;
+//         const messageFind = await chatgptModel.findById(id);
+//         if (!messageFind) {
+//             return res.status(400).json({status: "no encontrado"});
+//         }
+//         res.status(200).json(messageFind);
+//     } catch (error) {
+//         console.log(error);
+//         res.status(400).json({ status: "error en el servidor" });
+//     }
+// });
 
-//ver que consultas hizo un usuario
-router.get("/user/:id_user",ValidateToken , regAcces, async (req, res)=>{
-    try {
-        const id_user = req.params.id_user;
-        const exist = await userModel.findOne({_id: id_user})
-        if (!exist) {
-            return res.status(400).json({status: "este usuario no existe"})
-        }
-        const prompts = await chatgptModel.find({id_user});
-        if (prompts.length==0) {
-            return res.status(400).json({status: "este usuario no ha realizado consultas"});
-        }
-        res.status(200).json(prompts);
-    } catch (error) {
-        console.log(error);
-        res.status(400).json({ status: "error en el servidor" });
-    }
-});
+// //ver que consultas hizo un usuario
+// router.get("/user/:id_user",ValidateToken , regAcces, async (req, res)=>{
+//     try {
+//         const id_user = req.params.id_user;
+//         const exist = await userModel.findOne({_id: id_user})
+//         if (!exist) {
+//             return res.status(400).json({status: "este usuario no existe"})
+//         }
+//         const prompts = await chatgptModel.find({id_user});
+//         if (prompts.length==0) {
+//             return res.status(400).json({status: "este usuario no ha realizado consultas"});
+//         }
+//         res.status(200).json(prompts);
+//     } catch (error) {
+//         console.log(error);
+//         res.status(400).json({ status: "error en el servidor" });
+//     }
+// });
 
 
 //traer la list de chats de un usuario
