@@ -56,7 +56,8 @@ router.post("/", ValidateToken, ValidatePrompt, regAcces, async (req, res) => {
             date_create: date,
           });
           await chatgpt.save();
-          res.status(200).json({respuesta: response});
+
+          res.status(200).json( chatgpt )
         }catch (error) {
           console.log(error);
           res.status(500).send("Error con la API de OpenAI");
