@@ -12,7 +12,7 @@ yarn-error.log*
 dist/
 
 # Otros archivos y directorios generados por herramientas o dependencias específicas del proyecto
-.env
+
 # Agrega aquí los archivos o directorios que no deseas incluir en el repositorio
 
 # Archivos de configuración de sistema operativo
