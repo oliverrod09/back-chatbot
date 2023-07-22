@@ -29,7 +29,7 @@ Ve a la carpeta del proyecto: cd back-chatbot
 
 Instala las dependencias del proyecto: npm install
 
-Inicia el servidor del backend: npm start
+Inicia el servidor del backend: node app
 
 El servidor del backend estará en funcionamiento y listo para recibir solicitudes del frontend del chatbot.
 
